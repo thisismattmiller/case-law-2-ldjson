@@ -196,9 +196,21 @@ module.exports = {
 					  									if (x.value.search('{footnotemarkstart}')>-1){
 					  										var words = x.value.split(/\s/)
 					  										var notedSentence = []
+                                var wordCount = -1
 					  										words.forEach((word)=>{
+                                  wordCount++
 					  											if (word.search('{footnotemarkstart}')>-1){
-					  												notedSentence.push(word)
+
+                                    notedSentence.push(word)
+                                    // for strange footnote marks like "{footnotemarkstart}|| ||{footnotemarkend}"
+                                    if (word.search('{footnotemarkend}')===-1){
+                                      if (words[wordCount+1] && words[wordCount+1].search('{footnotemarkend}') > -1){
+                                        notedSentence.push(words[wordCount+1])
+                                      }else if (words[wordCount+2] && words[wordCount+2].search('{footnotemarkend}') > -1){
+                                        notedSentence.push(words[wordCount+1])
+                                        notedSentence.push(words[wordCount+2])
+                                      }
+                                    }
 					  												footNoteSentences.push(notedSentence.join(' '))
 					  											}else{
 					  												notedSentence.push(word)
